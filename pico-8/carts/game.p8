@@ -14,18 +14,27 @@ function _init()
 	make_ground()
 end
 
-function quantum_calculations(item, shots)
+function quantum_calculations()
     local qc = QuantumCircuit()
     qc.set_registers(4)
     --check what items the player is holding and do the gate
-    qc.h(0)
-    qc.h(1)
-    qc.h(2)
-    qc.h(3)
+    --qc.h(0)
+    --qc.h(1)
+    --qc.h(2)
+    --qc.h(3)
     --qc.cx(0,1)
     --qc.cx(0,2)
     --qc.cx(0,3)
-
+    w=0
+    while w < count(player.items) do
+        if (player.items[w] == "sword") then
+            qc.h(w)
+        elseif (player.items[w] == "shield") then
+            qc.cx(w,3)
+        elseif (player.items[w] == "toe ring") then
+            qc.rx(pi/4,w)
+        end
+    end
     local meas = QuantumCircuit()
     meas.set_registers(4,4)
     meas.measure(0,0)
@@ -90,6 +99,7 @@ function _update()
     end
 	move_player()
 
+
 end
 
 function _draw()
@@ -100,6 +110,7 @@ function _draw()
     draw_ground()
     draw_player()
   end
+  damage_calculations()
 end
 
 function rndb(low,high)
