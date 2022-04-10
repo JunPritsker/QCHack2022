@@ -340,10 +340,16 @@ function update_start_menu()
 		items_selected += 1
 		player.items[items_selected] = items[m.sel]
 		if count(player.items) == count(items) then
+		    for i = 1,20 do
+	            flip()
+	        end
 			state = "shots_complete"
 		end
 	end
 	if btnp(❎) then
+	    for i = 1,20 do
+	        flip()
+	    end
     	state="shots_complete"
     end
 end
