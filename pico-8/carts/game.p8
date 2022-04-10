@@ -38,13 +38,29 @@ function _draw()
         draw_shots_complete()
 	elseif state == "inventory_complete" then
 		draw_inventory_complete()
-  	elseif stat == "game" then
-    	draw_player()
+  	elseif state == "game" or state == "wait_turn" then
+    	draw_players()
+		draw_health()
+		delay(100)
 	elseif state == "game_over" then
 		print("YOU DIED", 37, 70, 8)
 	elseif state == "you_win" then
 		print("YOU WIN!", 37, 70, 11)
   	end
+end
+
+-- Block until user presses a key
+function input_block()
+	while not(btn(0) or btn(1) or btn(2) or btn(3) or btn(4) or btn(5)) do
+		print("press any key to play next round", 64, 64, 12)
+	end
+end
+
+-- Delay for some time
+function delay(time)
+	for i=1, time, 1 do
+		flip()
+	end
 end
 
 function quantum_calculations()
@@ -256,6 +272,7 @@ function make_player()
 	player.score=0
 	player.items={}
 	player.health=10
+	player.starting_health=10
   
 	cpu={}
 	cpu.x=70 --position
@@ -268,10 +285,11 @@ function make_player()
 	cpu.score=0
 	cpu.items={}
 	cpu.health=10
+	cpu.starting_health=10
   
 end
 
-function draw_player()
+function draw_players()
 	if (game_over) then
 		spr(player.dead,player.x,player.y)
 		spr(cpu.dead,cpu.x,cpu.y)
@@ -282,10 +300,30 @@ function draw_player()
 		spr(player.fall,player.x,player.y)
 		spr(cpu.fall,cpu.x,cpu.y)
 	end
-
-
 end
 
+function draw_health()
+	health_color = {}
+	health_color["low"] = 8
+	health_color["high"] = 11
+	health_color["medium"] = 9
+	if player.health <= player.starting_health/4 then
+		player_health_color = health_color["low"]
+	elseif (player.health > player.starting_health/4) and (player.health < player.starting_health * 0.75) then
+		player_health_color = health_color["medium"]
+	elseif player.health >= player.starting_health * 0.75 then
+		player_health_color = health_color["high"]
+	end
+	if cpu.health <= cpu.starting_health/4 then
+		cpu_health_color = health_color["low"]
+	elseif (cpu.health > cpu.starting_health/4) and (cpu.health < cpu.starting_health * 0.75) then
+		cpu_health_color = health_color["medium"]
+	elseif cpu.health >= cpu.starting_health * 0.75 then
+		cpu_health_color = health_color["high"]
+	end
+	print("player health: "..player.health, 37, 10, player_health_color)
+	print("cpu health: "..cpu.health, 37, 20, cpu_health_color)
+end
 -->8
 --menu
 
