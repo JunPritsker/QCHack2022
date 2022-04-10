@@ -13,3 +13,6 @@ This directory is created for uploading QHack solutions for IBM challenge
 6. Now you are all set. Just open any web browser, and type http://localhost:8000/ to enjoy and play LudoTeleport!
 
 ## Members
+Jun Pritsker
+Austin Choi
+Evan Burnham
