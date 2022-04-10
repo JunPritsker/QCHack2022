@@ -170,7 +170,7 @@ function make_player()
 	player.speed=2 --fly speed
 	player.score=0
 	player.items={}
-	player.health={100}
+	player.health=100
   
 	cpu={}
 	cpu.x=70 --position
@@ -182,20 +182,20 @@ function make_player()
 	cpu.speed=2 --fly speed
 	cpu.score=0
 	cpu.items={}
-	cpu.health={100}
+	cpu.health=100
   
 end
 
 function draw_player()
 	if (game_over) then
 		spr(player.dead,player.x,player.y)
-		spr(cpu.dead,player1.x,player1.y)
+		spr(cpu.dead,cpu.x,cpu.y)
 	elseif (player.dy<0) then
 		spr(player.rise,player.x,player.y)
-		spr(cpu.rise,player1.x,player1.y)
+		spr(cpu.rise,cpu.x,cpu.y)
 	else
 		spr(player.fall,player.x,player.y)
-		spr(cpu.fall,player1.x,player1.y)
+		spr(cpu.fall,cpu.x,cpu.y)
 	end
 
 
