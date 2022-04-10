@@ -4,7 +4,7 @@ __lua__
 -- main
 
 #include MicroQiskit.lua
-items = {sword="h",shield="cx",ring="pi/4"}
+item_to_gate = {sword="h",shield="cx",ring="pi/4"}
 function _init()
 	make_items()
 	make_player()
@@ -80,13 +80,11 @@ function damage_calculations()
     print(weight)
 end
 
-
-
-
 function _update()
 	if state=="menu" then
         update_menu()
     elseif state=="game" then
+		update_game()
     end
 	move_player()
 
@@ -105,7 +103,14 @@ end
 function rndb(low,high)
 	return flr(rnd(high-low+1)+low)
 end
+-->8
+--game
 
+function update_game()
+	if btnp(5) then
+		-- if user presses x while game is running, present menu to quit or something
+	end
+end
 
 -->8
 --items
@@ -115,6 +120,23 @@ function make_items()
 	items[1]="sword"
 	items[2]="shield"
 	items[3]="toe ring"
+
+	item_lookup = {}
+	item_lookup[1]=false
+	item_lookup[2]=false
+	item_lookup[3]=false
+
+	items_selected = 0
+
+	item_str_to_sprite_index = {}
+	item_str_to_sprite_index["sword"] = 64
+	item_str_to_sprite_index["shield"] = 68
+	item_str_to_sprite_index["toe ring"] = 72
+
+	item_num_to_sprite_index = {}
+	item_num_to_sprite_index[1] = 64
+	item_num_to_sprite_index[2] = 68
+	item_num_to_sprite_index[3] = 72
 end
 
 -->8
@@ -130,7 +152,7 @@ function make_player()
 	player.dead=3
 	player.speed=2 --fly speed
 	player.score=0
-  player.items={}
+	player.items={}
   
 	player1={}
 	player1.x=70 --position
@@ -141,7 +163,7 @@ function make_player()
 	player1.dead=3
 	player1.speed=2 --fly speed
 	player1.score=0
-  player1.items={}
+	player1.items={}
   
 end
 
@@ -173,7 +195,7 @@ function move_player()
 	player.y+=player.dy
 end
 -->8
-
+--ground
 function make_ground()
 	--create the ground
 	gnd={}
@@ -227,7 +249,6 @@ function init_menu()
 			"toe ring"}
 	m.amt=count(m.options)
 	m.sel=1
-	cx=m.x
 	col1=7
 	col2=3
 end
@@ -235,10 +256,12 @@ end
 function update_menu()
 	update_cursor()
 	if btnp(4) then
-		add(player.items, items[m.sel])
-		print("ass")
+		items_selected += 1
+		player.items[items_selected] = items[m.sel]
+		-- add(player.items, items[m.sel])
 		print(" selected!", 37, 70, 14)
 		print(items[m.sel].." selected!", 37, 70, 14)
+		
 	end
 	if btnp(❎) then
     	state="game"
@@ -246,57 +269,62 @@ function update_menu()
 end
 
 function update_cursor()
-	if (btnp(2)) m.sel-=1 cx=m.x
-	if (btnp(3)) m.sel+=1 cx=m.x
-	if (btnp(4)) cx=m.x
+	if (btnp(0)) m.sel-=1
+	if (btnp(1)) m.sel+=1 
 	if (m.sel>m.amt) m.sel=1
 	if (m.sel<=0) m.sel=m.amt
-
-	cx=lerp(cx,m.x+5,0.5)
 end
 
 function draw_options()
 	frame_width = 32
-	gap = 0
+	gap = 5
 	lsw = 4-1 -- large sprite width
 	lsh = 4-1 -- large sprite height
 	lsoff = 16 -- large sprite number offset
-	si = 64 -- sprite index
+	si = 64 -- large sprite first index
 	for i=1, 3, 1 do
-		spr(si+((i-1)*4), 10+((32*i)-32)+(gap*i), 20, 4, 4)
+		spr(si+((i-1)*4), 10-gap+((32*i)-32)+(gap*i), 20, 4, 4)
 	end
 	for i=1, m.amt do
-		
-		if i==1 then
-			gap = 0
-		else
-			gap = 5
-		end
   		if i==m.sel then
-  			-- rectfill(cx,m.y+offset-1,cx+36,m.y+offset+5,col1)
-			rect(10-1+((32*i)-32)+(gap*i),20-1,10+32+1+((32*i)-32)+(gap*i),20+32+1,7)
-			rect(10+((32*i)-32)+(gap*i),20,10+32+((32*i)-32)+(gap*i),20+32,7)
-   			--print(m.options[i],cx+1,m.y+offset,col2)
+			rect((10-1)-gap+((32*i)-32)+(gap*i),20-1,10-gap+32+1+((32*i)-32)+(gap*i),20+32+1,7)
+			rect(10-gap+((32*i)-32)+(gap*i),20,10-gap+32+((32*i)-32)+(gap*i),20+32,7)
   		else
-		  	rect(10+((32*i)-32)+(gap*i),20,10+32+((32*i)-32)+(gap*i),20+32,7)
+		  	rect(10-gap+((32*i)-32)+(gap*i),20,10-gap+32+((32*i)-32)+(gap*i),20+32,7) -- Item Options
    			--print(m.options[i],m.x,m.y+offset,col1)
 		end
 	end
 end
 
+-- Update the inventory as player picks items
+function draw_inventory()
+	-- Draw placeholder boxes for inventory
+	for i=1, count(items), 1 do
+		rect(4+((32*i)-32)+(gap*i),80,4+32+((32*i)-32)+(gap*i),80+32,7) -- Inventory
+	end
+	-- Draw sprites for items as they're selected in their boxes
+	for i=1, count(player.items), 1 do
+		spr(item_str_to_sprite_index[player.items[i]], 10-gap+((32*i)-32)+(gap*i), 80, 4, 4)
+	end
+end
+
 function draw_menu()
- --rectfill(m.x-8,m.y-8,m.x+32,m.y+40,3)
- draw_options()
- 
- print("choose your weapon",m.x,m.y-4,col1)
- line(m.x,m.y+2,m.x+22,m.y+2,col1)
+	--rectfill(m.x-8,m.y-8,m.x+32,m.y+40,3)
+	draw_options()
+	draw_inventory()
+
+	print("choose your weapon",m.x,m.y-4,col1)
+	line(m.x,m.y+2,m.x+70,m.y+2,col1)
+
+	print("inventory",m.x,m.y+60,col1)
+	line(m.x,m.y+66,m.x+35,m.y+66,col1)
 end
 
 __gfx__
-000000000000000000000000000000000001c0000100001000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000001c0000100001000089800000000000000000000000000000000000000000000000000000000000000000000000000
 000000000aaaaaa0000770000000000000111c00011001100089a900000000000000000000000000000000000000000000000000000000000000000000000000
 000000000a0000a000077000008888000011110001111110009a9800000000000000000000000000000000000000000000000000000000000000000000000000
-000000000a0770a000007000088888800011110001911910008a8900000000000000000000000000000000000000000000000000000000000000000000000000
+000000000a0770a000007000088888800011110001911910008a8000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000a0000a00077777008888888001111000119911000044000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000a7777a00000700008800888055555500191191000044000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000aaaaaa00007070000000000000440000111111000066000000000000000000000000000000000000000000000000000000000000000000000000000
