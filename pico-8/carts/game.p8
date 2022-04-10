@@ -66,8 +66,9 @@ function quantum_calculations()
         elseif (player.items[w] == "shield") then
             qc.cx(w,3)
         elseif (player.items[w] == "toe ring") then
-            qc.rx(pi/4,w)
+            qc.rx(math.pi/4,w)
         end
+		w += 1
     end
 
     g=0
@@ -77,8 +78,9 @@ function quantum_calculations()
         elseif (cpu.items[w] == "shield") then
             qcCPU.cx(g,3)
         elseif (cpu.items[w] == "toe ring") then
-            qcCPU.rx(pi/4,g)
+            qcCPU.rx(math.pi/4,g)
         end
+		g += 1
     end
 
     local meas = QuantumCircuit()
@@ -194,6 +196,7 @@ end
 --game
 
 function update_game()
+	printh("update_game")
 	if btnp(5) then
 		-- if user presses x while game is running, present menu to quit or something
 	end
