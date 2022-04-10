@@ -14,25 +14,31 @@ function _init()
 end
 
 function _update()
-	if state=="start_menu" then
+	if state == "start_menu" then
         update_start_menu()
-	elseif state=="inventory_complete" then
+	elseif state == "inventory_complete" then
 		update_inventory_complete()
-    elseif state=="game" then
+    elseif state == "game" then
 		update_game()
+	elseif state == "wait_turn" then
+		init_start_menu()
+		player.items = {}
+		state = "start_menu"
     end
 end
 
 function _draw()
 	cls()
-	if state=="start_menu" then
+	if state == "start_menu" then
     	draw_start_menu()
-	elseif state=="inventory_complete" then
+	elseif state == "inventory_complete" then
 		draw_inventory_complete()
-  	elseif state=="game" then
+  	elseif stat == "game" then
     	draw_player()
-	elseif state=="game_over" then
+	elseif state == "game_over" then
 		print("YOU DIED", 37, 70, 8)
+	elseif state == "you_win" then
+		print("YOU WIN!", 37, 70, 11)
   	end
 end
 
@@ -193,10 +199,11 @@ function update_game()
 	end
 
 	if (player.health > 0) and (cpu.health > 0) then
-	    damage_calculations()
+	    -- damage_calculations()
 	    player.health -= playerCPUDamage
 	    cpu.health -= playerDamage
-	if (player.health <= 0) and (cpu.health <= 0) then
+		state = "wait_turn"
+	elseif (player.health <= 0) and (cpu.health <= 0) then
 	    state="tie"
 	elseif (cpu.health <= 0) then
 	    state="you_win"
@@ -248,7 +255,7 @@ function make_player()
 	player.speed=2 --fly speed
 	player.score=0
 	player.items={}
-	player.health=100
+	player.health=10
   
 	cpu={}
 	cpu.x=70 --position
@@ -260,7 +267,7 @@ function make_player()
 	cpu.speed=2 --fly speed
 	cpu.score=0
 	cpu.items={}
-	cpu.health=100
+	cpu.health=10
   
 end
 
@@ -340,6 +347,7 @@ function update_inventory_complete()
 		if inv_c.options[inv_c.sel] == "start!" then
 			state = "game"
 			quantum_calculations()
+			damage_calculations()
 		elseif inv_c.options[inv_c.sel] == "reset" then
 			state = "start_menu"
 			init_start_menu() -- Reset start menu variables
