@@ -465,10 +465,10 @@ function draw_weapon_options()
 	end
 	for i=1, m.amt do
   		if i==m.sel then
-			rect((10-1)-gap+((32*i)-32)+(gap*i),20-1,10-gap+32+1+((32*i)-32)+(gap*i),20+32+1,7)
-			rect(10-gap+((32*i)-32)+(gap*i),20,10-gap+32+((32*i)-32)+(gap*i),20+32,7)
+			rect((10-1)-gap+((32*i)-32)+(gap*i),20-1,10-gap+32+1+((32*i)-32)+(gap*i),20+32+1,7) -- Thicker border to show highlighted item frame
+			rect(10-gap+((32*i)-32)+(gap*i),20,10-gap+32+((32*i)-32)+(gap*i),20+32,7) -- Item frame
   		else
-		  	rect(10-gap+((32*i)-32)+(gap*i),20,10-gap+32+((32*i)-32)+(gap*i),20+32,7) -- Item Options
+		  	rect(10-gap+((32*i)-32)+(gap*i),20,10-gap+32+((32*i)-32)+(gap*i),20+32,7) -- Item frame
 		end
 	end
 end
