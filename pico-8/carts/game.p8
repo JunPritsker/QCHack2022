@@ -51,6 +51,17 @@ function quantum_calculations(item, shots)
     --qc.cx(0,2)
     --qc.cx(0,3)
 
+    w=0
+    while w < count(player.items) do
+        if (player.items[w] == "sword") then
+            qc.h(w)
+        elseif (player.items[w] == "shield") then
+            qc.cx(w,3)
+        elseif (player.items[w] == "toe ring") then
+            qc.rx(pi/4,w)
+        end
+    end
+
     local meas = QuantumCircuit()
     meas.set_registers(4,4)
     meas.measure(0,0)
