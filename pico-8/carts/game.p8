@@ -90,7 +90,7 @@ function quantum_calculations()
             qc.h(w)
         elseif (player.items[w] == "shield") then
             qc.cx(w,3)
-        elseif (player.items[w] == "toe ring") then
+        elseif (player.items[w] == "torch") then
             qc.rx(math.pi/4,w)
         end
 		w += 1
@@ -244,7 +244,7 @@ function make_items()
 	items = {}
 	items[1]="sword"
 	items[2]="shield"
-	items[3]="toe ring"
+	items[3]="torch"
 
 	item_lookup = {}
 	item_lookup[1]=false
@@ -256,7 +256,7 @@ function make_items()
 	item_str_to_sprite_index = {}
 	item_str_to_sprite_index["sword"] = 64
 	item_str_to_sprite_index["shield"] = 68
-	item_str_to_sprite_index["toe ring"] = 72
+	item_str_to_sprite_index["torch"] = 72
 
 	item_num_to_sprite_index = {}
 	item_num_to_sprite_index[1] = 64
@@ -344,7 +344,7 @@ function init_start_menu()
 	m.x=8
 	m.y=10
 	m.options={"sword","shield",
-			"toe ring"}
+			"torch"}
 	m.amt=count(m.options)
 	m.sel=1
 	col1=7
