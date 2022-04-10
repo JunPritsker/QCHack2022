@@ -22,7 +22,11 @@ function _update()
 	elseif state == "inventory_complete" then
 	    update_inventory_complete()
     elseif state == "game" then
+		_draw()
+		delay(50)
 		update_game()
+		_draw()
+		delay(50)
 	elseif state == "wait_turn" then
 		init_start_menu()
 		player.items = {}
@@ -39,13 +43,14 @@ function _draw()
 	elseif state == "inventory_complete" then
 		draw_inventory_complete()
   	elseif state == "game" or state == "wait_turn" then
-    	draw_players()
+		draw_players()
 		draw_health()
-		delay(100)
 	elseif state == "game_over" then
-		print("YOU DIED", 37, 70, 8)
+		print("you died", 37, 70, 8)
 	elseif state == "you_win" then
-		print("YOU WIN!", 37, 70, 11)
+		print("you win!", 37, 70, 11)
+	elseif state == "tie" then
+		print("tie", 37, 70, 7)
   	end
 end
 
@@ -209,7 +214,6 @@ end
 --game
 
 function update_game()
-	printh("update_game")
 	if btnp(5) then
 		-- if user presses x while game is running, present menu to quit or something
 	end
@@ -218,8 +222,11 @@ function update_game()
 	    -- damage_calculations()
 	    player.health -= playerCPUDamage
 	    cpu.health -= playerDamage
+		_draw()
+		delay(30)
 		state = "wait_turn"
-	elseif (player.health <= 0) and (cpu.health <= 0) then
+	end
+	if (player.health <= 0) and (cpu.health <= 0) then
 	    state="tie"
 	elseif (cpu.health <= 0) then
 	    state="you_win"
@@ -378,16 +385,14 @@ function update_start_menu()
 		items_selected += 1
 		player.items[items_selected] = items[m.sel]
 		if count(player.items) == count(items) then
-		    for i = 1,20 do
-	            flip()
-	        end
+			draw_inventory()
+		    delay(20)
 			state = "shots_complete"
 		end
 	end
 	if btnp(❎) then
-	    for i = 1,20 do
-	        flip()
-	    end
+		draw_inventory()
+	    delay(20)
     	state="shots_complete"
     end
 end
@@ -403,13 +408,13 @@ function update_inventory_complete()
 	update_inventory_complete_cursor()
 	if btnp(4) then
 		if inv_c.options[inv_c.sel] == "start!" then
-			state = "game"
 			quantum_calculations()
 			damage_calculations()
+			state = "game"
 		elseif inv_c.options[inv_c.sel] == "reset" then
-			state = "start_menu"
 			init_start_menu() -- Reset start menu variables
 			make_player() -- Reset players
+			state = "start_menu"
 		elseif inv_c.options[inv_c.sel] == "exit" then
 			state = "game_over"
 		end
@@ -499,7 +504,7 @@ function draw_shots_complete()
 	rectfill(inv_shots.x-8,inv_shots.y-8,inv_shots.x+32,inv_shots.y+40,3)
 	draw_shots_options()
 
-	print("How many shots?",inv_shots.x,inv_shots.y-4,col1)
+	print("how many shots?",inv_shots.x,inv_shots.y-4,col1)
 	line(inv_shots.x,inv_shots.y+2,inv_shots.x+22,inv_shots.y+2,col1)
 end
 
@@ -534,7 +539,7 @@ function draw_start_menu()
 	draw_weapon_options()
 	draw_inventory()
 
-	print("choose your weapon",m.x,m.y-4,col1)
+	print("choose your weapons",m.x,m.y-4,col1)
 	line(m.x,m.y+2,m.x+70,m.y+2,col1)
 
 	print("inventory",m.x,m.y+60,col1)
