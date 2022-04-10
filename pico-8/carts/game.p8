@@ -6,9 +6,9 @@ __lua__
 #include MicroQiskit.lua
 
 function _init()
+	state = "start_menu"
 	make_items()
 	make_player()
-	state = "start_menu"
 	init_start_menu()
 	init_inventory_complete()
 	make_ground()
@@ -119,6 +119,7 @@ end
 function rndb(low,high)
 	return flr(rnd(high-low+1)+low)
 end
+
 -->8
 --game
 
@@ -257,7 +258,6 @@ function lerp(startv,endv,per)
 end
 
 function init_start_menu()
-	state="start_menu"
 	items_selected = 0
 	m={}
 	m.x=8
@@ -309,7 +309,9 @@ function update_inventory_complete()
 	update_inventory_complete_cursor()
 	if btnp(4) then
 		if inv_c.options[inv_c.sel] == "start!" then
+			state = "game"
 		elseif inv_c.options[inv_c.sel] == "reset" then
+			state = "start_menu"
 			init_start_menu() -- Reset start menu variables
 			make_player() -- Reset players
 		elseif inv_c.options[inv_c.sel] == "exit" then
