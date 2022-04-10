@@ -4,14 +4,39 @@ __lua__
 -- main
 
 #include MicroQiskit.lua
-item_to_gate = {sword="h",shield="cx",ring="pi/4"}
+
 function _init()
 	make_items()
 	make_player()
-	state = "menu"
-	game_over=false
-	init_menu()
+	state = "start_menu"
+	init_start_menu()
+	init_inventory_complete()
 	make_ground()
+end
+
+function _update()
+	if state=="start_menu" then
+        update_start_menu()
+	elseif state=="inventory_complete" then
+		update_inventory_complete()
+    elseif state=="game" then
+		update_game()
+    end
+	move_player()
+end
+
+function _draw()
+	cls()
+	if state=="start_menu" then
+    	draw_start_menu()
+	elseif state=="inventory_complete" then
+		draw_inventory_complete()
+  	elseif state=="game" then
+    	draw_ground()
+    	draw_player()
+	elseif state=="game_over" then
+		print("YOU DIED", 37, 70, 8)
+  	end
 end
 
 function quantum_calculations(item, shots)
@@ -80,26 +105,6 @@ function damage_calculations()
     print(weight)
 end
 
-function _update()
-	if state=="menu" then
-        update_menu()
-    elseif state=="game" then
-		update_game()
-    end
-	move_player()
-
-end
-
-function _draw()
-	cls()
-	if state=="menu" then
-    draw_menu()
-  elseif state=="game" then
-    draw_ground()
-    draw_player()
-  end
-end
-
 function rndb(low,high)
 	return flr(rnd(high-low+1)+low)
 end
@@ -126,7 +131,7 @@ function make_items()
 	item_lookup[2]=false
 	item_lookup[3]=false
 
-	items_selected = 0
+	item_to_gate = {sword="h",shield="cx",ring="pi/4"}
 
 	item_str_to_sprite_index = {}
 	item_str_to_sprite_index["sword"] = 64
@@ -240,8 +245,9 @@ function lerp(startv,endv,per)
 	return(startv+per*(endv-startv))
 end
 
-function init_menu()
-	state="menu"
+function init_start_menu()
+	state="start_menu"
+	items_selected = 0
 	m={}
 	m.x=8
 	m.y=10
@@ -253,29 +259,65 @@ function init_menu()
 	col2=3
 end
 
-function update_menu()
-	update_cursor()
+-- Init the options when inventory is complete
+function init_inventory_complete()
+	inv_c={}
+	inv_c.x=8
+	inv_c.y=40
+	inv_c.options={"start!","reset",
+			"exit"}
+	inv_c.amt=count(inv_c.options)
+	inv_c.sel=1
+	cx=inv_c.x
+	col1=7
+	col2=3
+end
+
+function update_start_menu()
+	update_start_menu_cursor()
 	if btnp(4) then
 		items_selected += 1
 		player.items[items_selected] = items[m.sel]
-		-- add(player.items, items[m.sel])
-		print(" selected!", 37, 70, 14)
-		print(items[m.sel].." selected!", 37, 70, 14)
-		
+		if count(player.items) == count(items) then
+			state = "inventory_complete"
+		end
 	end
 	if btnp(❎) then
-    	state="game"
+    	state="inventory_complete"
     end
 end
 
-function update_cursor()
+function update_start_menu_cursor()
 	if (btnp(0)) m.sel-=1
 	if (btnp(1)) m.sel+=1 
 	if (m.sel>m.amt) m.sel=1
 	if (m.sel<=0) m.sel=m.amt
 end
 
-function draw_options()
+function update_inventory_complete()
+	update_inventory_complete_cursor()
+	if btnp(4) then
+		if inv_c.options[inv_c.sel] == "start!" then
+		elseif inv_c.options[inv_c.sel] == "reset" then
+			init_start_menu() -- Reset start menu variables
+			make_player() -- Reset players
+		elseif inv_c.options[inv_c.sel] == "exit" then
+			
+		end
+	end
+end
+
+function update_inventory_complete_cursor()
+	if (btnp(2)) inv_c.sel-=1 cx=inv_c.x
+	if (btnp(3)) inv_c.sel+=1 cx=inv_c.x
+	if (btnp(4)) cx=inv_c.x
+	if (inv_c.sel>inv_c.amt) inv_c.sel=1
+	if (inv_c.sel<=0) inv_c.sel=inv_c.amt
+
+ 	cx=lerp(cx,inv_c.x+5,0.5)
+end
+
+function draw_weapon_options()
 	frame_width = 32
 	gap = 5
 	lsw = 4-1 -- large sprite width
@@ -308,9 +350,32 @@ function draw_inventory()
 	end
 end
 
-function draw_menu()
+-- When all inventory slots are assigned a weapon or the player presses x ask them what they want to do
+-- User can start the game or reset inventory and re-select
+function draw_inventory_complete()
+	rectfill(inv_c.x-8,inv_c.y-8,inv_c.x+32,inv_c.y+40,3)
+	draw_proceed_options()
+	
+	print("what next?",inv_c.x,inv_c.y-4,col1)
+	line(inv_c.x,inv_c.y+2,inv_c.x+22,inv_c.y+2,col1)
+end
+
+-- Draw the options for the user to start a game, reset inventory selection, or exit
+function draw_proceed_options()
+	for i=1, inv_c.amt do
+		offset=i*8
+		if i==inv_c.sel then
+			rectfill(cx,inv_c.y+offset-1, cx+36, inv_c.y+offset+5, col1)
+   			print(inv_c.options[i], cx+1, inv_c.y+offset, col2)
+  		else
+   			print(inv_c.options[i], inv_c.x, inv_c.y+offset, col1)
+  		end
+ 	end
+end
+
+function draw_start_menu()
 	--rectfill(m.x-8,m.y-8,m.x+32,m.y+40,3)
-	draw_options()
+	draw_weapon_options()
 	draw_inventory()
 
 	print("choose your weapon",m.x,m.y-4,col1)
@@ -318,6 +383,18 @@ function draw_menu()
 
 	print("inventory",m.x,m.y+60,col1)
 	line(m.x,m.y+66,m.x+35,m.y+66,col1)
+end
+
+-->8
+--helpers
+
+function print_5(messge)
+	for i=1, 30, 1 do
+		for i=1, 500, 1 do
+			print(message, 37, 70, 14)
+		end
+		yield()
+	end
 end
 
 __gfx__
