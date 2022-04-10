@@ -11,7 +11,6 @@ function _init()
 	make_player()
 	init_start_menu()
 	init_inventory_complete()
-	make_ground()
 end
 
 function _update()
@@ -22,7 +21,6 @@ function _update()
     elseif state=="game" then
 		update_game()
     end
-	move_player()
 end
 
 function _draw()
@@ -32,7 +30,6 @@ function _draw()
 	elseif state=="inventory_complete" then
 		draw_inventory_complete()
   	elseif state=="game" then
-    	draw_ground()
     	draw_player()
 	elseif state=="game_over" then
 		print("YOU DIED", 37, 70, 8)
@@ -199,57 +196,6 @@ function draw_player()
 
 end
 
-function move_player()
-	gravity=0.2 --bigger means more gravity!
-	player.dy+=gravity --add gravity
-
-	--jump
-	if (btnp(2)) then
-		player.dy-=5
-	end
-
-	--move to new position
-	player.y+=player.dy
-end
--->8
---ground
-function make_ground()
-	--create the ground
-	gnd={}
-	local top=96 --highest point
-	local btm=120 --lowest point
-
-	--set up the landing pad
-	pad={}
-	pad.width=15
-	pad.x=rndb(0,126-pad.width)
-	pad.y=rndb(top,btm)
-	pad.sprite=2
-	
-	--create ground at pad
-	for i=pad.x,pad.x+pad.width do
-		gnd[i]=pad.y
-	end
-	
-	--create ground right of pad
-	for i=pad.x+pad.width+1,127 do
-		local h=rndb(gnd[i-1]-3,gnd[i-1]+3)
-		gnd[i]=mid(top,h,btm)
-	end
-	
-	--create ground left of pad
-	for i=pad.x-1,0,-1 do
-		local h=rndb(gnd[i+1]-3,gnd[i+1]+3)
-		gnd[i]=mid(top,h,btm)
-	end
-end
-
-function draw_ground()
-	for i=0,127 do
-		line(i,gnd[i],i,127,5)
-	end
-end
-
 -->8
 --menu
 
@@ -315,7 +261,7 @@ function update_inventory_complete()
 			init_start_menu() -- Reset start menu variables
 			make_player() -- Reset players
 		elseif inv_c.options[inv_c.sel] == "exit" then
-			
+			state = "game_over"
 		end
 	end
 end
