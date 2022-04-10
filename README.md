@@ -12,6 +12,6 @@ This directory is created for uploading QHack solutions for IBM challenge
 9. Inventory selection and combat will continue in a turn based manner until the player or CPU dies
 
 ## Members
-Jun Pritsker
-Austin Choi
-Evan Burnham
+Jun Pritsker @JunPritsker 
+Austin Choi @CAholder 
+Evan Burnham @emb396
