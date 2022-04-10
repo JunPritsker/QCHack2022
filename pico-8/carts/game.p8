@@ -200,13 +200,13 @@ function update_game()
 	    player.health -= playerCPUDamage
 	    cpu.health -= playerDamage
 	if (player.health <= 0) and (cpu.health <= 0) then
-	    state="Tie"
+	    state="tie"
 	elseif (cpu.health <= 0) then
-	    state="You Win!"
+	    state="you_win"
 	elseif (player.health <= 0) then
 	    state="game_over"
 	else
-	    state="Wait Turn"
+	    state="wait_turn"
 	end
 end
 
