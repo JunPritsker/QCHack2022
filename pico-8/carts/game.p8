@@ -4,11 +4,11 @@ __lua__
 -- main
 
 function _init()
+	make_items()
+	make_player()
 	state = "menu"
 	game_over=false
 	init_menu()
-	choose_items()
-	make_player()
 	make_ground()
 end
 
@@ -16,7 +16,6 @@ function _update()
 	if state=="menu" then
         update_menu()
     elseif state=="game" then
-        update_game()
     end
 	move_player()
 end
@@ -35,9 +34,19 @@ function rndb(low,high)
 	return flr(rnd(high-low+1)+low)
 end
 -->8
+--items
+
+function make_items()
+	items = {}
+	items[1]="sword"
+	items[2]="shield"
+	items[3]="toe ring"
+end
+
+-->8
 -- player
 
-function make_player()	
+function make_player()
 	player={}
 	player.x=24 --position
 	player.y=60
@@ -47,7 +56,9 @@ function make_player()
 	player.dead=3
 	player.speed=2 --fly speed
 	player.score=0
+	player.items={}
 end
+
 function draw_player()
 	if (game_over) then
 		spr(player.dead,player.x,player.y)
@@ -108,6 +119,7 @@ function draw_ground()
 		line(i,gnd[i],i,127,5)
 	end
 end
+
 -->8
 --menu
 
@@ -119,7 +131,7 @@ function init_menu()
 	state="menu"
 	m={}
 	m.x=8
-	m.y=40
+	m.y=10
 	m.options={"sword","shield",
 			"toe ring"}
 	m.amt=count(m.options)
@@ -132,9 +144,10 @@ end
 function update_menu()
 	update_cursor()
 	if btnp(4) then
-		if m.options[m.sel]=="start" then
-			state="game"
-		end
+		add(player.items, items[m.sel])
+		print("ass")
+		print(" selected!", 37, 70, 14)
+		print(items[m.sel].." selected!", 37, 70, 14)
 	end
 	if btnp(❎) then
     	state="game"
@@ -157,10 +170,10 @@ function draw_options()
 	lsw = 4-1 -- large sprite width
 	lsh = 4-1 -- large sprite height
 	lsoff = 16 -- large sprite number offset
-	si = 64-- sprite index
-	spr(64, 10+((32*1)-32)+(gap*1), 20, 4, 4)
-	spr(68, 10+((32*2)-32)+(gap*2), 20, 4, 4)
-	spr(72, 10+((32*3)-32)+(gap*3), 20, 4, 4)
+	si = 64 -- sprite index
+	for i=1, 3, 1 do
+		spr(si+((i-1)*4), 10+((32*i)-32)+(gap*i), 20, 4, 4)
+	end
 	for i=1, m.amt do
 		
 		if i==1 then
@@ -186,10 +199,6 @@ function draw_menu()
  
  print("choose your weapon",m.x,m.y-4,col1)
  line(m.x,m.y+2,m.x+22,m.y+2,col1)
-end
-
-function choose_items()
-	print("Choose your items", 37, 70, 14)
 end
 
 __gfx__
