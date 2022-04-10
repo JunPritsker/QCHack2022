@@ -458,11 +458,7 @@ function update_shots_complete_cursor()
 end
 
 function draw_weapon_options()
-	frame_width = 32
 	gap = 5
-	lsw = 4-1 -- large sprite width
-	lsh = 4-1 -- large sprite height
-	lsoff = 16 -- large sprite number offset
 	si = 64 -- large sprite first index
 	for i=1, 3, 1 do
 		spr(si+((i-1)*4), 10-gap+((32*i)-32)+(gap*i), 20, 4, 4)
@@ -473,7 +469,6 @@ function draw_weapon_options()
 			rect(10-gap+((32*i)-32)+(gap*i),20,10-gap+32+((32*i)-32)+(gap*i),20+32,7)
   		else
 		  	rect(10-gap+((32*i)-32)+(gap*i),20,10-gap+32+((32*i)-32)+(gap*i),20+32,7) -- Item Options
-   			--print(m.options[i],m.x,m.y+offset,col1)
 		end
 	end
 end
