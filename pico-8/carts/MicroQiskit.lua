@@ -2,9 +2,30 @@
 --
 -- Copyright IBM 2020
 
-math.randomseed(os.time())
 
+math = {}
+math.pi = 3.14159
+math.max = max
+math.sqrt = sqrt
+math.floor = flr
+
+function math.random()
+  return rnd(1)
+end
+function math.cos(theta)
+  return cos(theta/(2*math.pi))
+end
+function math.sin(theta)
+  return -sin(theta/(2*math.pi))
+end
+function math.randomseed(time)
+end
+os = {}
+function os.time()
+end
 function QuantumCircuit ()
+
+math.randomseed(os.time())
 
   local qc = {}
 

@@ -3,11 +3,43 @@ version 35
 __lua__
 -- main
 
+#include MicroQiskit.lua
+items = {sword="h",shield="cx",ring="pi/4"}
 function _init()
 	game_over=false
 	make_player()
-	make_ground()
+	--make_ground()
 end
+
+function damage_calculations()
+    x=0
+    local qc = QuantumCircuit()
+    qc.set_registers(4)
+    --check what items the player is holding and do the gate
+    qc.h(0)
+    qc.h(1)
+    qc.h(2)
+    qc.h(3)
+    qc.cx(0,1)
+    qc.cx(0,2)
+    qc.cx(0,3)
+
+    local meas = QuantumCircuit()
+    meas.set_registers(4,4)
+    meas.measure(0,0)
+    meas.measure(1,1)
+    meas.measure(3,3)
+    meas.measure(2,2)
+
+    qc.add_circuit(meas)
+    result = simulate(qc,"counts",100)
+    print("\nThe counts are\n",55,55)
+    for string, counts in pairs(result) do
+        print(string.."="..counts)
+    end
+
+end
+
 
 function _update()
 	move_player()
@@ -15,15 +47,18 @@ end
 
 function _draw()
 	cls()
-	draw_ground()
+	--draw_ground()
 	draw_player()
+	damage_calculations()
 end
 
 function rndb(low,high)
 	return flr(rnd(high-low+1)+low)
 end
+
+
 -->8
--- player
+--player
 
 function make_player()
 	player={}
@@ -35,15 +70,30 @@ function make_player()
 	player.dead=3
 	player.speed=2 --fly speed
 	player.score=0
+
+	player1={}
+	player1.x=70 --position
+	player1.y=60
+	player1.dy=0 --fall speed
+	player1.rise=1 --sprites
+	player1.fall=2
+	player1.dead=3
+	player1.speed=2 --fly speed
+	player1.score=0
 end
 function draw_player()
 	if (game_over) then
 		spr(player.dead,player.x,player.y)
+		spr(player1.dead,player1.x,player1.y)
 	elseif (player.dy<0) then
 		spr(player.rise,player.x,player.y)
+		spr(player1.rise,player1.x,player1.y)
 	else
 		spr(player.fall,player.x,player.y)
+		spr(player1.fall,player1.x,player1.y)
 	end
+
+
 end
 
 function move_player()
@@ -97,6 +147,10 @@ function draw_ground()
 		line(i,gnd[i],i,127,5)
 	end
 end
+
+
+
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000aaaaaa00007700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
