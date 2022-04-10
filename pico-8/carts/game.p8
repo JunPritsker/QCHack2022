@@ -75,14 +75,6 @@ function quantum_calculations()
     qc.set_registers(4)
     local qcCPU = QuantumCircuit()
     qcCPU.set_registers(4)
-    --check what items the player is holding and do the gate
-    --qc.h(0)
-    --qc.h(1)
-    --qc.h(2)
-    --qc.h(3)
-    --qc.cx(0,1)
-    --qc.cx(0,2)
-    --qc.cx(0,3)
 
     w=0
     while w < count(player.items) do
