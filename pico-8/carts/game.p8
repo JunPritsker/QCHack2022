@@ -10,14 +10,17 @@ function _init()
 	make_items()
 	make_player()
 	init_start_menu()
+	init_shots_complete()
 	init_inventory_complete()
 end
 
 function _update()
 	if state == "start_menu" then
         update_start_menu()
+    elseif state == "shots_complete" then
+        update_shots_complete()
 	elseif state == "inventory_complete" then
-		update_inventory_complete()
+	    update_inventory_complete()
     elseif state == "game" then
 		update_game()
 	elseif state == "wait_turn" then
@@ -31,6 +34,8 @@ function _draw()
 	cls()
 	if state == "start_menu" then
     	draw_start_menu()
+    elseif state == "shots_complete" then
+        draw_shots_complete()
 	elseif state == "inventory_complete" then
 		draw_inventory_complete()
   	elseif stat == "game" then
@@ -43,7 +48,6 @@ function _draw()
 end
 
 function quantum_calculations()
-    shotsPlayer = 100
     shotsCPU = 100
     local last = time()
     local qc = QuantumCircuit()
@@ -316,17 +320,31 @@ function init_inventory_complete()
 	col2=3
 end
 
+-- Init the options when inventory is complete
+function init_shots_complete()
+	inv_shots={}
+	inv_shots.x=8
+	inv_shots.y=40
+	inv_shots.options={"10","100",
+			"500"}
+	inv_shots.amt=count(inv_shots.options)
+	inv_shots.sel=1
+	cx=inv_shots.x
+	col1=7
+	col2=3
+end
+
 function update_start_menu()
 	update_start_menu_cursor()
 	if btnp(4) then
 		items_selected += 1
 		player.items[items_selected] = items[m.sel]
 		if count(player.items) == count(items) then
-			state = "inventory_complete"
+			state = "shots_complete"
 		end
 	end
 	if btnp(❎) then
-    	state="inventory_complete"
+    	state="shots_complete"
     end
 end
 
@@ -362,6 +380,32 @@ function update_inventory_complete_cursor()
 	if (inv_c.sel<=0) inv_c.sel=inv_c.amt
 
  	cx=lerp(cx,inv_c.x+5,0.5)
+end
+
+function update_shots_complete()
+	update_shots_complete_cursor()
+	if btnp(4) then
+		if inv_shots.options[inv_shots.sel] == "10" then
+			shotsPlayer = 10
+			state="inventory_complete"
+		elseif inv_shots.options[inv_shots.sel] == "100" then
+			shotsPlayer = 100
+			state="inventory_complete"
+		elseif inv_shots.options[inv_shots.sel] == "500" then
+			shotsPlayer = 500
+			state="inventory_complete"
+		end
+	end
+end
+
+function update_shots_complete_cursor()
+	if (btnp(2)) inv_shots.sel-=1 cx=inv_shots.x
+	if (btnp(3)) inv_shots.sel+=1 cx=inv_shots.x
+	if (btnp(4)) cx=inv_shots.x
+	if (inv_shots.sel>inv_shots.amt) inv_shots.sel=1
+	if (inv_shots.sel<=0) inv_shots.sel=inv_shots.amt
+
+ 	cx=lerp(cx,inv_shots.x+5,0.5)
 end
 
 function draw_weapon_options()
@@ -407,6 +451,14 @@ function draw_inventory_complete()
 	line(inv_c.x,inv_c.y+2,inv_c.x+22,inv_c.y+2,col1)
 end
 
+function draw_shots_complete()
+	rectfill(inv_shots.x-8,inv_shots.y-8,inv_shots.x+32,inv_shots.y+40,3)
+	draw_shots_options()
+
+	print("How many shots?",inv_shots.x,inv_shots.y-4,col1)
+	line(inv_shots.x,inv_shots.y+2,inv_shots.x+22,inv_shots.y+2,col1)
+end
+
 -- Draw the options for the user to start a game, reset inventory selection, or exit
 function draw_proceed_options()
 	for i=1, inv_c.amt do
@@ -416,6 +468,19 @@ function draw_proceed_options()
    			print(inv_c.options[i], cx+1, inv_c.y+offset, col2)
   		else
    			print(inv_c.options[i], inv_c.x, inv_c.y+offset, col1)
+  		end
+ 	end
+end
+
+-- Draw the options for the user to start a game, reset inventory selection, or exit
+function draw_shots_options()
+	for i=1, inv_shots.amt do
+		offset=i*8
+		if i==inv_shots.sel then
+			rectfill(cx,inv_shots.y+offset-1, cx+36, inv_shots.y+offset+5, col1)
+   			print(inv_shots.options[i], cx+1, inv_shots.y+offset, col2)
+  		else
+   			print(inv_shots.options[i], inv_shotsx, inv_shots.y+offset, col1)
   		end
  	end
 end
