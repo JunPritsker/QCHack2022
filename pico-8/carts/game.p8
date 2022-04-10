@@ -39,14 +39,19 @@ function _draw()
   	end
 end
 
-function quantum_calculations(item, shots)
+function quantum_calculations()
+    shotsPlayer = 100
+    shotsCPU = 100
+    local last = time()
     local qc = QuantumCircuit()
     qc.set_registers(4)
+    local qcCPU = QuantumCircuit()
+    qcCPU.set_registers(4)
     --check what items the player is holding and do the gate
-    qc.h(0)
-    qc.h(1)
-    qc.h(2)
-    qc.h(3)
+    --qc.h(0)
+    --qc.h(1)
+    --qc.h(2)
+    --qc.h(3)
     --qc.cx(0,1)
     --qc.cx(0,2)
     --qc.cx(0,3)
@@ -62,6 +67,17 @@ function quantum_calculations(item, shots)
         end
     end
 
+    g=0
+    while g < count(cpu.items) do
+        if (cpu.items[w] == "sword") then
+            qcCPU.h(g)
+        elseif (cpu.items[w] == "shield") then
+            qcCPU.cx(g,3)
+        elseif (cpu.items[w] == "toe ring") then
+            qcCPU.rx(pi/4,g)
+        end
+    end
+
     local meas = QuantumCircuit()
     meas.set_registers(4,4)
     meas.measure(0,0)
@@ -70,50 +86,101 @@ function quantum_calculations(item, shots)
     meas.measure(2,2)
 
     qc.add_circuit(meas)
-    result = simulate(qc,"counts",100)
+    resultPlayer = simulate(qc,"counts",shotsPlayer)
+    executionPlayer = time() - last
+
+    local measCPU = QuantumCircuit()
+    measCPU.set_registers(4,4)
+    measCPU.measure(0,0)
+    measCPU.measure(1,1)
+    measCPU.measure(3,3)
+    measCPU.measure(2,2)
+
+    qcCPU.add_circuit(measCPU)
+    resultCPU = simulate(qcCPU,"counts",shotsCPU)
+    executionCPU = time() - last
 end
 
 function damage_calculations()
-    --states = {0000=0, 0001=1, 0010=2, 0100=4, 1000=8, 0011=3, 0110=6, 1100=12, 0101=5, 1010=10, 1001=9, 0111=7, 1110=14, 1111=15, 1101=13, 1011=11}
-    weight = 0
-    for string, counts in pairs(result) do
+    playerDamage = 0
+    for string, counts in pairs(resultPlayer) do
         print(string.."="..counts)
         print(counts)
         if (string == "0000") then
-            weight = weight + (0*(counts/100))
+            playerDamage = playerDamage + (0*(counts/100))
         elseif (string == "0001") then
-            weight += 1*(counts/100)
+            playerDamage += 1*(counts/100)
         elseif (string == "0010") then
-            weight = weight + (2*(counts/100))
+            playerDamage = playerDamage + (2*(counts/100))
         elseif (string == "0100") then
-            weight += 4*(counts/100)
+            playerDamage += 4*(counts/100)
         elseif (string == "1000") then
-            weight += 8*(counts/100)
+            playerDamage += 8*(counts/100)
         elseif (string == "0011") then
-            weight += 3*(counts/100)
+            playerDamage += 3*(counts/100)
         elseif (string == "0110") then
-            weight += 6*(counts/100)
+            playerDamage += 6*(counts/100)
         elseif (string == "1100") then
-            weight += 12*(counts/100)
+            playerDamage += 12*(counts/100)
         elseif (string == "0101") then
-            weight += 5*(counts/100)
+            playerDamage += 5*(counts/100)
         elseif (string == "1010") then
-            weight += 10*(counts/100)
+            playerDamage += 10*(counts/100)
         elseif (string == "1001") then
-            weight += 9*(counts/100)
+            playerDamage += 9*(counts/100)
         elseif (string == "0111") then
-            weight += 7*(counts/100)
+            playerDamage += 7*(counts/100)
         elseif (string =="1110") then
-            weight += 14*(counts/100)
+            playerDamage += 14*(counts/100)
         elseif (string == "1111") then
-            weight += 15*(counts/100)
+            playerDamage += 15*(counts/100)
         elseif (string == "1101") then
-            weight += 13*(counts/100)
+            playerDamage += 13*(counts/100)
         elseif (string == "1011") then
-            weight += 11*(counts/100)
+            playerDamage += 11*(counts/100)
         end
     end
-    print(weight)
+    print(playerDamage)
+
+    playerCPUDamage = 0
+    for string, counts in pairs(resultCPU) do
+        print(string.."="..counts)
+        print(counts)
+        if (string == "0000") then
+            playerCPUDamage = playerCPUDamage + (0*(counts/100))
+        elseif (string == "0001") then
+            playerCPUDamage += 1*(counts/100)
+        elseif (string == "0010") then
+            playerCPUDamage = playerCPUDamage + (2*(counts/100))
+        elseif (string == "0100") then
+            playerCPUDamage += 4*(counts/100)
+        elseif (string == "1000") then
+            playerCPUDamage += 8*(counts/100)
+        elseif (string == "0011") then
+            playerCPUDamage += 3*(counts/100)
+        elseif (string == "0110") then
+            playerCPUDamage += 6*(counts/100)
+        elseif (string == "1100") then
+            playerCPUDamage += 12*(counts/100)
+        elseif (string == "0101") then
+            playerCPUDamage += 5*(counts/100)
+        elseif (string == "1010") then
+            playerCPUDamage += 10*(counts/100)
+        elseif (string == "1001") then
+            playerCPUDamage += 9*(counts/100)
+        elseif (string == "0111") then
+            playerCPUDamage += 7*(counts/100)
+        elseif (string =="1110") then
+            playerCPUDamage += 14*(counts/100)
+        elseif (string == "1111") then
+            playerCPUDamage += 15*(counts/100)
+        elseif (string == "1101") then
+            playerCPUDamage += 13*(counts/100)
+        elseif (string == "1011") then
+            playerCPUDamage += 11*(counts/100)
+        end
+    end
+    print(playerCPUDamage)
 end
 
 function rndb(low,high)
@@ -126,6 +193,20 @@ end
 function update_game()
 	if btnp(5) then
 		-- if user presses x while game is running, present menu to quit or something
+	end
+
+	if (player.health > 0) and (cpu.health > 0) then
+	    damage_calculations()
+	    player.health -= playerCPUDamage
+	    cpu.health -= playerDamage
+	if (player.health <= 0) and (cpu.health <= 0) then
+	    state="Tie"
+	elseif (cpu.health <= 0) then
+	    state="You Win!"
+	elseif (player.health <= 0) then
+	    state="game_over"
+	else
+	    state="Wait Turn"
 	end
 end
 
@@ -312,6 +393,7 @@ function update_inventory_complete()
 	if btnp(4) then
 		if inv_c.options[inv_c.sel] == "start!" then
 			state = "game"
+			quantum_calculations()
 		elseif inv_c.options[inv_c.sel] == "reset" then
 			state = "start_menu"
 			init_start_menu() -- Reset start menu variables
