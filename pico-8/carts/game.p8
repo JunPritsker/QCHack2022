@@ -8,11 +8,13 @@ items = {sword="h",shield="cx",ring="pi/4"}
 function _init()
 	game_over=false
 	make_player()
+	cls()
 	--make_ground()
+	--need to do some kind of user input here?
+	quantum_calculations()
 end
 
-function damage_calculations()
-    x=0
+function quantum_calculations(item, shots)
     local qc = QuantumCircuit()
     qc.set_registers(4)
     --check what items the player is holding and do the gate
@@ -20,9 +22,9 @@ function damage_calculations()
     qc.h(1)
     qc.h(2)
     qc.h(3)
-    qc.cx(0,1)
-    qc.cx(0,2)
-    qc.cx(0,3)
+    --qc.cx(0,1)
+    --qc.cx(0,2)
+    --qc.cx(0,3)
 
     local meas = QuantumCircuit()
     meas.set_registers(4,4)
@@ -33,16 +35,57 @@ function damage_calculations()
 
     qc.add_circuit(meas)
     result = simulate(qc,"counts",100)
-    print("\nThe counts are\n",55,55)
+end
+
+function damage_calculations()
+    --states = {0000=0, 0001=1, 0010=2, 0100=4, 1000=8, 0011=3, 0110=6, 1100=12, 0101=5, 1010=10, 1001=9, 0111=7, 1110=14, 1111=15, 1101=13, 1011=11}
+    weight = 0
     for string, counts in pairs(result) do
         print(string.."="..counts)
+        print(counts)
+        if (string == "0000") then
+            weight = weight + (0*(counts/100))
+        elseif (string == "0001") then
+            weight += 1*(counts/100)
+        elseif (string == "0010") then
+            weight = weight + (2*(counts/100))
+        elseif (string == "0100") then
+            weight += 4*(counts/100)
+        elseif (string == "1000") then
+            weight += 8*(counts/100)
+        elseif (string == "0011") then
+            weight += 3*(counts/100)
+        elseif (string == "0110") then
+            weight += 6*(counts/100)
+        elseif (string == "1100") then
+            weight += 12*(counts/100)
+        elseif (string == "0101") then
+            weight += 5*(counts/100)
+        elseif (string == "1010") then
+            weight += 10*(counts/100)
+        elseif (string == "1001") then
+            weight += 9*(counts/100)
+        elseif (string == "0111") then
+            weight += 7*(counts/100)
+        elseif (string =="1110") then
+            weight += 14*(counts/100)
+        elseif (string == "1111") then
+            weight += 15*(counts/100)
+        elseif (string == "1101") then
+            weight += 13*(counts/100)
+        elseif (string == "1011") then
+            weight += 11*(counts/100)
+        end
     end
-
+    print(weight)
 end
+
+
 
 
 function _update()
 	move_player()
+
 end
 
 function _draw()
@@ -81,6 +124,7 @@ function make_player()
 	player1.speed=2 --fly speed
 	player1.score=0
 end
+
 function draw_player()
 	if (game_over) then
 		spr(player.dead,player.x,player.y)
@@ -147,8 +191,6 @@ function draw_ground()
 		line(i,gnd[i],i,127,5)
 	end
 end
-
-
 
 
 __gfx__
