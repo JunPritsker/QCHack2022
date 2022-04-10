@@ -2,15 +2,15 @@
 This directory is created for uploading QHack solutions for IBM challenge
 
 ## Steps to open & play the Game
-1. Install Django and Qiskit
- - To install Django type in: _pip install Django==3.1.5_
- - To install Qiskit type in: _pip install qiskit_
-2. Open the /qsite/qrng/views.py file
- - In the code you will see a line called IBMQ.enable_account('ENTER API KEY HERE'). This is where you need to put in an API token. In order to get an API key you will have to register to the IBM quantum experience: https://quantum-computing.ibm.com
-3. Using terminal, navigate to the directory where qsite folder has been extracted.
-4. Make sure you have the files up to date by entering: _python manage.py migrate_ in to your terminal.
-5. Make sure you have the django webservice running by entering: _python manage.py runserver_ in to your terminal.
-6. Now you are all set. Just open any web browser, and type http://localhost:8000/ to enjoy and play LudoTeleport!
+1. Install Pico-8
+2. In Pico-8:
+3. run the command `load game.p8`
+4. run the command `run game.p8`
+5. In the "Choose your weapons" menu use the left and right arrow keys on your computer to select an item and z to select an item
+6. After choosing 3 items or after pressing x, your inventory will be set for the round
+7. Next you will be prompted to pick a number of shots. Use the up and down arrow keys to select a number of shots and z to select.
+8. Next you can choose "START!" to begin a round of combat, "RESET" to go back to inventory selection, or "EXIT" to end the game.
+9. Inventory selection and combat will continue in a turn based manner until the player or CPU dies
 
 ## Members
 Jun Pritsker
