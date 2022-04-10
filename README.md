@@ -13,5 +13,7 @@ This directory is created for uploading QHack solutions for IBM challenge
 
 ## Members
 Jun Pritsker @JunPritsker 
+
 Austin Choi @CAholder 
+
 Evan Burnham @emb396
