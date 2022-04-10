@@ -71,17 +71,10 @@ function quantum_calculations()
 		w += 1
     end
 
-    g=0
-    while g < count(cpu.items) do
-        if (cpu.items[w] == "sword") then
-            qcCPU.h(g)
-        elseif (cpu.items[w] == "shield") then
-            qcCPU.cx(g,3)
-        elseif (cpu.items[w] == "toe ring") then
-            qcCPU.rx(math.pi/4,g)
-        end
-		g += 1
-    end
+    qcCPU.h(1)
+    qcCPU.h(3)
+    qcCPU.cx(3,1)
+    qcCPU.rx(math.pi/4,3)
 
     local meas = QuantumCircuit()
     meas.set_registers(4,4)
